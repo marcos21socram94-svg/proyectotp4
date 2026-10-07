@@ -1,23 +1,21 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import productoRoutes from './routes/productoRoutes.js';
-import { errorHandler } from './middlewares/errorHandler.js';
-import proveedorRoutes from './routes/proveedor.Routes.js';
-import clienteRoutes from './routes/cliente.Routes.js';
+import proveedorRoutes from './routes/proveedorRoutes.js';
+import clienteRoutes from './routes/clienteRoutes.js';
 import empleadoRoutes from './routes/empleadoRoutes.js';
 import envioRoutes from './routes/envioRoutes.js';
 import pedidoRoutes from './routes/pedidoRoutes.js';
-
-// Cargar variables de entorno desde el archivo .env
+import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
-// Crear una instancia de la aplicación Express
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Rutas de la API
+// Rutas de la API (6 Entidades)
 app.use('/api/productos', productoRoutes);
 app.use('/api/proveedores', proveedorRoutes);
 app.use('/api/clientes', clienteRoutes);
@@ -25,13 +23,12 @@ app.use('/api/empleados', empleadoRoutes);
 app.use('/api/envios', envioRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 
-
-// Route 404 para endpoints que no existen
+// Ruta 404 para endpoints inexistentes
 app.use((req, res) => {
   res.status(404).json({ mensaje: 'Ruta no encontrada' });
 });
 
-// Middleware global de errores (siempre va al final)
+// Middleware global de errores
 app.use(errorHandler);
 
 app.listen(PORT, () => {
