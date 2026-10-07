@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-10-2026 a las 20:20:46
+-- Tiempo de generación: 07-10-2026 a las 21:59:07
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -29,11 +29,18 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `clientes` (
   `id` int(11) NOT NULL,
-  `NombreYApellido` int(11) NOT NULL,
-  `Telefono` int(11) NOT NULL,
-  `DNI` int(11) NOT NULL,
-  `Correo` text NOT NULL
+  `NombreYApellido` varchar(50) NOT NULL,
+  `Telefono` int(15) NOT NULL,
+  `DNI` int(15) NOT NULL,
+  `Correo` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de clientes';
+
+--
+-- Volcado de datos para la tabla `clientes`
+--
+
+INSERT INTO `clientes` (`id`, `NombreYApellido`, `Telefono`, `DNI`, `Correo`) VALUES
+(1, 'Facundo Jelvez', 29840080, 1111111111, 'correoejemplo@hotmail.com');
 
 -- --------------------------------------------------------
 
@@ -42,11 +49,18 @@ CREATE TABLE `clientes` (
 --
 
 CREATE TABLE `compañia de envios` (
-  `id_compañia` int(11) NOT NULL,
-  `correo` text NOT NULL,
-  `telefono` int(11) NOT NULL,
-  `nombre` text NOT NULL
+  `id_compañia` int(15) NOT NULL,
+  `correo` varchar(30) NOT NULL,
+  `telefono` int(15) NOT NULL,
+  `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Compañia de envios';
+
+--
+-- Volcado de datos para la tabla `compañia de envios`
+--
+
+INSERT INTO `compañia de envios` (`id_compañia`, `correo`, `telefono`, `nombre`) VALUES
+(1, 'ejemplo@ejemplo.com', 298459600, 'Envios Internacionales');
 
 -- --------------------------------------------------------
 
@@ -55,14 +69,21 @@ CREATE TABLE `compañia de envios` (
 --
 
 CREATE TABLE `empleados` (
-  `Id` int(11) NOT NULL,
-  `DNI` int(11) NOT NULL,
+  `Id` int(15) NOT NULL,
+  `DNI` int(15) NOT NULL,
   `FechNacimiento` date NOT NULL,
-  `NombreYApellido` text NOT NULL,
-  `Correo` text NOT NULL,
-  `Telefono` int(11) NOT NULL,
-  `ObraSocial` text NOT NULL
+  `NombreYApellido` varchar(50) NOT NULL,
+  `Correo` varchar(30) NOT NULL,
+  `Telefono` int(15) NOT NULL,
+  `ObraSocial` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de Empleados';
+
+--
+-- Volcado de datos para la tabla `empleados`
+--
+
+INSERT INTO `empleados` (`Id`, `DNI`, `FechNacimiento`, `NombreYApellido`, `Correo`, `Telefono`, `ObraSocial`) VALUES
+(1, 249585719, '2001-01-01', 'Natalia Figueroa', 'example@example.com', 298451001, 'Sancord seguros');
 
 -- --------------------------------------------------------
 
@@ -71,14 +92,21 @@ CREATE TABLE `empleados` (
 --
 
 CREATE TABLE `pedidos` (
-  `Id` int(11) NOT NULL,
+  `Id` int(15) NOT NULL,
   `FechaPedido` date NOT NULL,
-  `Cantidad` int(11) NOT NULL,
-  `PrecioUnit` int(11) NOT NULL,
-  `CodigoProd` int(11) NOT NULL,
-  `PrecioTotal` int(11) NOT NULL,
-  `ImportTotal` int(11) NOT NULL
+  `Cantidad` int(40) NOT NULL,
+  `PrecioUnit` int(40) NOT NULL,
+  `CodigoProd` int(15) NOT NULL,
+  `PrecioTotal` int(40) NOT NULL,
+  `ImportTotal` int(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de pedidos';
+
+--
+-- Volcado de datos para la tabla `pedidos`
+--
+
+INSERT INTO `pedidos` (`Id`, `FechaPedido`, `Cantidad`, `PrecioUnit`, `CodigoProd`, `PrecioTotal`, `ImportTotal`) VALUES
+(1, '2001-01-01', 20, 100, 1, 10000, 100000);
 
 -- --------------------------------------------------------
 
@@ -87,11 +115,18 @@ CREATE TABLE `pedidos` (
 --
 
 CREATE TABLE `productos` (
-  `prod_id` int(11) NOT NULL,
-  `Tipo` text NOT NULL,
-  `Nombre` text NOT NULL,
+  `prod_id` int(15) NOT NULL,
+  `Tipo` varchar(30) NOT NULL,
+  `Nombre` varchar(30) NOT NULL,
   `Vencimiento` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de productos';
+
+--
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`prod_id`, `Tipo`, `Nombre`, `Vencimiento`) VALUES
+(1, 'Alimenticio', 'Fideos Marolio', '2002-01-01');
 
 -- --------------------------------------------------------
 
@@ -100,17 +135,30 @@ CREATE TABLE `productos` (
 --
 
 CREATE TABLE `proveedores` (
-  `id` int(11) NOT NULL,
-  `Telefono` int(11) NOT NULL,
-  `Correo` text NOT NULL,
-  `Nombre` text NOT NULL,
-  `codigoPedido` int(11) NOT NULL,
-  `compañiaEnvio` int(11) NOT NULL
+  `id` int(15) NOT NULL,
+  `Telefono` int(15) NOT NULL,
+  `Correo` varchar(30) NOT NULL,
+  `Nombre` varchar(40) NOT NULL,
+  `codigoPedido` int(15) NOT NULL,
+  `compañiaEnvio` int(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de los proveedores';
+
+--
+-- Volcado de datos para la tabla `proveedores`
+--
+
+INSERT INTO `proveedores` (`id`, `Telefono`, `Correo`, `Nombre`, `codigoPedido`, `compañiaEnvio`) VALUES
+(1, 283823, 'ejemplo@ejemplo.com', 'Proveedores internacionales', 1, 1);
 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `compañia de envios`
@@ -152,28 +200,40 @@ ALTER TABLE `proveedores`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `clientes`
+--
+ALTER TABLE `clientes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `compañia de envios`
+--
+ALTER TABLE `compañia de envios`
+  MODIFY `id_compañia` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `prod_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `prod_id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas

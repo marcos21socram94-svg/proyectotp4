@@ -1,12 +1,12 @@
-## Distribuidora-Backend
+# Distribuidora-Backend
 
-## Instrucciones
+# Instrucciones
 
 ### 1. Requisitos Previos
-* Tener instalado **Node.js** (v18 o superior).
-* Tener activo el servidor local **XAMPP** (servidores Apache y MySQL).
+- Tener instalado **Node.js** (v18 o superior).
+- Tener activo el servidor local **XAMPP** (servidores Apache y MySQL).
 
-### 2. Clonar el Repositorio
+## 2. Clonar el Repositorio
 ```bash
 git clone [https://github.com/marcos21socram94-svg/proyectotp4.git](https://github.com/marcos21socram94-svg/proyectotp4.git)
 cd proyectotp4/distribuidora-backend
