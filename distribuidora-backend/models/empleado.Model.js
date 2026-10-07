@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 
- ///Ejecuta consultas SQL parametrizadas sobre la tabla 'empleados'.
+///Ejecuta consultas SQL parametrizadas sobre la tabla 'empleados'.
  
 
 // Obtener la lista completa de empleados
