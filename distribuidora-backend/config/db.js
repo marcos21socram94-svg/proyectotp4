@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// En lugar de abrir y cerrar una conexión por cada consulta HTTP un Connection Pool gestiona un conjunto de conexiones 
+// reutilizables para atender múltiples peticiones concurrentes de manera eficiente//
+
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',

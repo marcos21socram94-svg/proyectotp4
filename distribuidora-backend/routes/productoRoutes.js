@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getProductos, getProducto, createProducto } from '../controllers/productoController.js';
+//define las rutas para los productos y las asocia con los controladores correspondientes
 
 const router = Router();
 
