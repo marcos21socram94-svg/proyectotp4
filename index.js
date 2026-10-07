@@ -4,6 +4,9 @@ import productoRoutes from './routes/productoRoutes.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import proveedorRoutes from './routes/proveedor.Routes.js';
 import clienteRoutes from './routes/cliente.Routes.js';
+import empleadoRoutes from './routes/empleadoRoutes.js';
+import envioRoutes from './routes/envioRoutes.js';
+import pedidoRoutes from './routes/pedidoRoutes.js';
 
 // Cargar variables de entorno desde el archivo .env
 
@@ -18,6 +21,10 @@ app.use(express.json());
 app.use('/api/productos', productoRoutes);
 app.use('/api/proveedores', proveedorRoutes);
 app.use('/api/clientes', clienteRoutes);
+app.use('/api/empleados', empleadoRoutes);
+app.use('/api/envios', envioRoutes);
+app.use('/api/pedidos', pedidoRoutes);
+
 
 // Route 404 para endpoints que no existen
 app.use((req, res) => {

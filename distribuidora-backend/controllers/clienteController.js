@@ -1,9 +1,7 @@
 import * as clienteModel from '../models/clienteModel.js';
 
-/**
- * Capa de Controlador - Entidad: Clientes
- * Gestiona el flujo HTTP (petición/respuesta) y canaliza errores hacia errorHandler.js
- */
+
+///Gestiona el flujo HTTP (petición/respuesta) y canaliza errores hacia errorHandler
 
 // GET /api/clientes
 export const getClientes = async (req, res, next) => {

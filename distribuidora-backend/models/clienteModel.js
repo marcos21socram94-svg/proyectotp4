@@ -1,9 +1,6 @@
 import pool from '../config/db.js';
 
-/**
- * Capa de Acceso a Datos (Model) - Entidad: Clientes
- * Maneja la interacción SQL pura con la tabla 'clientes' en MySQL.
- */
+/// Maneja la interacción SQL pura con la tabla 'clientes' en MySQL
 
 // Obtener todos los clientes
 export const getAllClientes = async () => {
