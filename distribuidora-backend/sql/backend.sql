@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS pedidos (
     CONSTRAINT fk_pedido_envio FOREIGN KEY (id_compañia) REFERENCES compañia_envios(id_compañia) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 7. Tabla Intermedia: Detalle de Pedidos (Exigida por el profesor para normalización e historial)
+-- 7. Tabla Intermedia: Detalle de Pedidos
 CREATE TABLE IF NOT EXISTS detalle_pedidos (
     id_detalle INT AUTO_INCREMENT PRIMARY KEY,
     id_pedido INT NOT NULL,
@@ -77,22 +77,22 @@ CREATE TABLE IF NOT EXISTS detalle_pedidos (
 -- ==========================================
 
 INSERT INTO proveedores (id, Nombre, Telefono, Correo) VALUES
-(1, 'Proveedores Internacionales', '2983823', 'ejemplo@ejemplo.com');
+(1, 'Proveedores Internacionales', '2983823', 'pepeEJ@ejemplo.com');
 
 INSERT INTO productos (prod_id, Tipo, Nombre, Vencimiento, id_proveedor) VALUES
-(1, 'Alimenticio', 'Fideos Marolio', '2002-01-01', 1);
+(1, 'Alimenticio', 'Fideos Marolio', '2005-06-06', 1);
 
 INSERT INTO clientes (id, NombreYApellido, Telefono, DNI, Correo) VALUES
 (1, 'Facundo Jelvez', '29840080', '11111111', 'correoejemplo@hotmail.com');
 
 INSERT INTO empleados (Id, DNI, FechNacimiento, NombreYApellido, Correo, Telefono, ObraSocial) VALUES
-(1, '24958571', '2001-01-01', 'Natalia Figueroa', 'example@example.com', '298451001', 'Sancord Seguros');
+(1, '24958571', '2008-08-01', 'Natalia Figueroa', 'example@example.com', '298451001', 'Sancord Seguros');
 
 INSERT INTO compañia_envios (id_compañia, nombre, correo, telefono) VALUES
 (1, 'Envios Internacionales', 'ejemplo@ejemplo.com', '298459600');
 
 INSERT INTO pedidos (Id, FechaPedido, id_cliente, id_compañia) VALUES
-(1, '2001-01-01', 1, 1);
+(1, '2020-05-01', 1, 1);
 
 INSERT INTO detalle_pedidos (id_pedido, id_producto, cantidad, precio_unitario) VALUES
 (1, 1, 20, 100.00);
