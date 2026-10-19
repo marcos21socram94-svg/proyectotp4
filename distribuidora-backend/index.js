@@ -8,14 +8,16 @@ import envioRoutes from './routes/envioRoutes.js';
 import pedidoRoutes from './routes/pedidoRoutes.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
+// Cargar las variables de entorno del archivo .env
 dotenv.config();
 
+// 1. Inicializar Express primero
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+// 2. Middleware obligatorio para que el servidor entienda JSON
 app.use(express.json());
 
-// Rutas de la API (6 Entidades)
+// 3. Rutas de la API (6 Entidades)
 app.use('/api/productos', productoRoutes);
 app.use('/api/proveedores', proveedorRoutes);
 app.use('/api/clientes', clienteRoutes);
@@ -23,13 +25,16 @@ app.use('/api/empleados', empleadoRoutes);
 app.use('/api/envios', envioRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 
-// Ruta 404 para endpoints inexistentes
+// 4. Ruta 404 para endpoints inexistentes
 app.use((req, res) => {
   res.status(404).json({ mensaje: 'Ruta no encontrada' });
 });
 
-// Middleware global de errores
+// 5. Middleware global de errores
 app.use(errorHandler);
+
+// 6. Definir el puerto y encender el servidor
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

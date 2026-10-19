@@ -11,10 +11,10 @@ export const getPedidoById = async (id) => {
 };
 
 export const createPedido = async (pedido) => {
-  const { FechaPedido, Cantidad, PrecioUnit, CodigoProd, PrecioTotal, ImportTotal } = pedido;
+  const { FechaPedido, Cantidad, PrecioUnit, CodigoProd, PrecioTotal, ImportTotal, id_empleado } = pedido;
   const [result] = await pool.query(
-    'INSERT INTO pedidos (FechaPedido, Cantidad, PrecioUnit, CodigoProd, PrecioTotal, ImportTotal) VALUES (?, ?, ?, ?, ?, ?)',
-    [FechaPedido, Cantidad, PrecioUnit, CodigoProd, PrecioTotal, ImportTotal]
+    'INSERT INTO pedidos (FechaPedido, Cantidad, PrecioUnit, CodigoProd, PrecioTotal, ImportTotal, id_empleado) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [FechaPedido, Cantidad, PrecioUnit, CodigoProd, PrecioTotal, ImportTotal, id_empleado ]
   );
   return { Id: result.insertId, ...pedido };
 };

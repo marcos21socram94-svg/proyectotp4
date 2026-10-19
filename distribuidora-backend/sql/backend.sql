@@ -1,263 +1,100 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 07-10-2026 a las 21:59:07
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Crear y usar la base de datos
+CREATE DATABASE IF NOT EXISTS backend;
+USE backend;
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+-- 1. Tabla Proveedores
+CREATE TABLE IF NOT EXISTS proveedores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(40) NOT NULL,
+    Telefono VARCHAR(20) NOT NULL,
+    Correo VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 2. Tabla Productos (Relacionada correctamente con Proveedores)
+CREATE TABLE IF NOT EXISTS productos (
+    prod_id INT AUTO_INCREMENT PRIMARY KEY,
+    Tipo VARCHAR(30) NOT NULL,
+    Nombre VARCHAR(30) NOT NULL,
+    Vencimiento DATE NOT NULL,
+    id_proveedor INT,
+    CONSTRAINT fk_producto_proveedor FOREIGN KEY (id_proveedor) 
+        REFERENCES proveedores(id) 
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 3. Tabla Clientes
+CREATE TABLE IF NOT EXISTS clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    NombreYApellido VARCHAR(50) NOT NULL,
+    Telefono VARCHAR(20) NOT NULL,
+    DNI VARCHAR(20) NOT NULL,
+    Correo VARCHAR(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 4. Tabla Empleados
+CREATE TABLE IF NOT EXISTS empleados (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    DNI VARCHAR(20) NOT NULL,
+    FechNacimiento DATE NOT NULL,
+    NombreYApellido VARCHAR(50) NOT NULL,
+    Correo VARCHAR(50) NOT NULL,
+    Telefono VARCHAR(20) NOT NULL,
+    ObraSocial VARCHAR(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 5. Tabla Compañía de Envíos
+CREATE TABLE IF NOT EXISTS compañia_envios (
+    id_compañia INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    correo VARCHAR(50) NOT NULL,
+    telefono VARCHAR(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 6. Tabla Pedidos (Cabecera)
+CREATE TABLE IF NOT EXISTS pedidos (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    FechaPedido DATE NOT NULL,
+    id_cliente INT NOT NULL,
+    id_compañia INT,
+    id_empleado INT NOT NULL,
+    CONSTRAINT fk_pedido_cliente FOREIGN KEY (id_cliente) REFERENCES clientes(id) ON DELETE CASCADE,
+    CONSTRAINT fk_pedido_envio FOREIGN KEY (id_compañia) REFERENCES compañia_envios(id_compañia) ON DELETE SET NULL
+    CONSTRAINT fk_pedido_empleado FOREIGN KEY (id_empleado) REFERENCES empleados(Id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 7. Tabla Intermedia: Detalle de Pedidos
+CREATE TABLE IF NOT EXISTS detalle_pedidos (
+    id_detalle INT AUTO_INCREMENT PRIMARY KEY,
+    id_pedido INT NOT NULL,
+    id_producto INT NOT NULL,
+    cantidad INT NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_detalle_pedido FOREIGN KEY (id_pedido) REFERENCES pedidos(Id) ON DELETE CASCADE,
+    CONSTRAINT fk_detalle_producto FOREIGN KEY (id_producto) REFERENCES productos(prod_id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+-- ==========================================
+-- VOLCADO DE DATOS (INSERTS DE PRUEBA)
+-- ==========================================
 
---
--- Base de datos: `backend`
---
+INSERT INTO proveedores (id, Nombre, Telefono, Correo) VALUES
+(1, 'Proveedores Internacionales', '2983823', 'pepeEJ@ejemplo.com');
 
--- --------------------------------------------------------
+INSERT INTO productos (prod_id, Tipo, Nombre, Vencimiento, id_proveedor) VALUES
+(1, 'Alimenticio', 'Fideos Marolio', '2005-06-06', 1);
 
---
--- Estructura de tabla para la tabla `clientes`
---
+INSERT INTO clientes (id, NombreYApellido, Telefono, DNI, Correo) VALUES
+(1, 'Facundo Jelvez', '29840080', '11111111', 'correoejemplo@hotmail.com');
 
-CREATE TABLE `clientes` (
-  `id` int(11) NOT NULL,
-  `NombreYApellido` varchar(50) NOT NULL,
-  `Telefono` int(15) NOT NULL,
-  `DNI` int(15) NOT NULL,
-  `Correo` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de clientes';
+INSERT INTO empleados (Id, DNI, FechNacimiento, NombreYApellido, Correo, Telefono, ObraSocial) VALUES
+(1, '24958571', '2008-08-01', 'Natalia Figueroa', 'example@example.com', '298451001', 'Sancord Seguros');
 
---
--- Volcado de datos para la tabla `clientes`
---
+INSERT INTO compañia_envios (id_compañia, nombre, correo, telefono) VALUES
+(1, 'Envios Internacionales', 'ejemplo@ejemplo.com', '298459600');
 
-INSERT INTO `clientes` (`id`, `NombreYApellido`, `Telefono`, `DNI`, `Correo`) VALUES
-(1, 'Facundo Jelvez', 29840080, 1111111111, 'correoejemplo@hotmail.com');
+INSERT INTO pedidos (Id, FechaPedido, id_cliente, id_compañia) VALUES
+(1, '2020-05-01', 1, 1);
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `compañia de envios`
---
-
-CREATE TABLE `compañia de envios` (
-  `id_compañia` int(15) NOT NULL,
-  `correo` varchar(30) NOT NULL,
-  `telefono` int(15) NOT NULL,
-  `nombre` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Compañia de envios';
-
---
--- Volcado de datos para la tabla `compañia de envios`
---
-
-INSERT INTO `compañia de envios` (`id_compañia`, `correo`, `telefono`, `nombre`) VALUES
-(1, 'ejemplo@ejemplo.com', 298459600, 'Envios Internacionales');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `empleados`
---
-
-CREATE TABLE `empleados` (
-  `Id` int(15) NOT NULL,
-  `DNI` int(15) NOT NULL,
-  `FechNacimiento` date NOT NULL,
-  `NombreYApellido` varchar(50) NOT NULL,
-  `Correo` varchar(30) NOT NULL,
-  `Telefono` int(15) NOT NULL,
-  `ObraSocial` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de Empleados';
-
---
--- Volcado de datos para la tabla `empleados`
---
-
-INSERT INTO `empleados` (`Id`, `DNI`, `FechNacimiento`, `NombreYApellido`, `Correo`, `Telefono`, `ObraSocial`) VALUES
-(1, 249585719, '2001-01-01', 'Natalia Figueroa', 'example@example.com', 298451001, 'Sancord seguros');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `pedidos`
---
-
-CREATE TABLE `pedidos` (
-  `Id` int(15) NOT NULL,
-  `FechaPedido` date NOT NULL,
-  `Cantidad` int(40) NOT NULL,
-  `PrecioUnit` int(40) NOT NULL,
-  `CodigoProd` int(15) NOT NULL,
-  `PrecioTotal` int(40) NOT NULL,
-  `ImportTotal` int(40) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de pedidos';
-
---
--- Volcado de datos para la tabla `pedidos`
---
-
-INSERT INTO `pedidos` (`Id`, `FechaPedido`, `Cantidad`, `PrecioUnit`, `CodigoProd`, `PrecioTotal`, `ImportTotal`) VALUES
-(1, '2001-01-01', 20, 100, 1, 10000, 100000);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `productos`
---
-
-CREATE TABLE `productos` (
-  `prod_id` int(15) NOT NULL,
-  `Tipo` varchar(30) NOT NULL,
-  `Nombre` varchar(30) NOT NULL,
-  `Vencimiento` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de productos';
-
---
--- Volcado de datos para la tabla `productos`
---
-
-INSERT INTO `productos` (`prod_id`, `Tipo`, `Nombre`, `Vencimiento`) VALUES
-(1, 'Alimenticio', 'Fideos Marolio', '2002-01-01');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `proveedores`
---
-
-CREATE TABLE `proveedores` (
-  `id` int(15) NOT NULL,
-  `Telefono` int(15) NOT NULL,
-  `Correo` varchar(30) NOT NULL,
-  `Nombre` varchar(40) NOT NULL,
-  `codigoPedido` int(15) NOT NULL,
-  `compañiaEnvio` int(15) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tabla de los proveedores';
-
---
--- Volcado de datos para la tabla `proveedores`
---
-
-INSERT INTO `proveedores` (`id`, `Telefono`, `Correo`, `Nombre`, `codigoPedido`, `compañiaEnvio`) VALUES
-(1, 283823, 'ejemplo@ejemplo.com', 'Proveedores internacionales', 1, 1);
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `clientes`
---
-ALTER TABLE `clientes`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `compañia de envios`
---
-ALTER TABLE `compañia de envios`
-  ADD PRIMARY KEY (`id_compañia`);
-
---
--- Indices de la tabla `empleados`
---
-ALTER TABLE `empleados`
-  ADD PRIMARY KEY (`Id`);
-
---
--- Indices de la tabla `pedidos`
---
-ALTER TABLE `pedidos`
-  ADD PRIMARY KEY (`Id`),
-  ADD UNIQUE KEY `CodigoProd` (`CodigoProd`),
-  ADD UNIQUE KEY `CodigoProd_2` (`CodigoProd`);
-
---
--- Indices de la tabla `productos`
---
-ALTER TABLE `productos`
-  ADD UNIQUE KEY `Codigo` (`prod_id`),
-  ADD UNIQUE KEY `Codigo_2` (`prod_id`);
-
---
--- Indices de la tabla `proveedores`
---
-ALTER TABLE `proveedores`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `codigoPedido` (`codigoPedido`),
-  ADD UNIQUE KEY `compañiaEnvio` (`compañiaEnvio`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `clientes`
---
-ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `compañia de envios`
---
-ALTER TABLE `compañia de envios`
-  MODIFY `id_compañia` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `empleados`
---
-ALTER TABLE `empleados`
-  MODIFY `Id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `pedidos`
---
-ALTER TABLE `pedidos`
-  MODIFY `Id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `productos`
---
-ALTER TABLE `productos`
-  MODIFY `prod_id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `proveedores`
---
-ALTER TABLE `proveedores`
-  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `compañia de envios`
---
-ALTER TABLE `compañia de envios`
-  ADD CONSTRAINT `compañia de envios_ibfk_1` FOREIGN KEY (`id_compañia`) REFERENCES `proveedores` (`compañiaEnvio`);
-
---
--- Filtros para la tabla `pedidos`
---
-ALTER TABLE `pedidos`
-  ADD CONSTRAINT `pedidos_ibfk_1` FOREIGN KEY (`Id`) REFERENCES `proveedores` (`codigoPedido`);
-
---
--- Filtros para la tabla `productos`
---
-ALTER TABLE `productos`
-  ADD CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`prod_id`) REFERENCES `pedidos` (`CodigoProd`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+INSERT INTO detalle_pedidos (id_pedido, id_producto, cantidad, precio_unitario) VALUES
+(1, 1, 20, 100.00);
