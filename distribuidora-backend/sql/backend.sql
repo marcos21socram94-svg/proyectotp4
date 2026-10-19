@@ -56,10 +56,15 @@ CREATE TABLE IF NOT EXISTS pedidos (
     FechaPedido DATE NOT NULL,
     id_cliente INT NOT NULL,
     id_compañia INT,
+<<<<<<< HEAD
     id_empleado INT NOT NULL,
     CONSTRAINT fk_pedido_cliente FOREIGN KEY (id_cliente) REFERENCES clientes(id) ON DELETE CASCADE,
     CONSTRAINT fk_pedido_envio FOREIGN KEY (id_compañia) REFERENCES compañia_envios(id_compañia) ON DELETE SET NULL
     CONSTRAINT fk_pedido_empleado FOREIGN KEY (id_empleado) REFERENCES empleados(Id) ON DELETE RESTRICT
+=======
+    CONSTRAINT fk_pedido_cliente FOREIGN KEY (id_cliente) REFERENCES clientes(id) ON DELETE CASCADE,
+    CONSTRAINT fk_pedido_envio FOREIGN KEY (id_compañia) REFERENCES compañia_envios(id_compañia) ON DELETE SET NULL
+>>>>>>> 2ff545241cffa543a7ab1a86676f3c14311b5df6
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 7. Tabla Intermedia: Detalle de Pedidos
