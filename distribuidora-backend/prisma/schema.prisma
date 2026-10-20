@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  email     String   @unique
+  telefono  String?
+  direccion String?
+  pedidos   Pedido[]
+}
+
+model Proveedor {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  contacto  String?
+  productos Producto[]
+}
+
+model Producto {
+  id             Int             @id @default(autoincrement())
+  nombre         String
+  precio         Decimal         @db.Decimal(10, 2)
+  stock          Int
+  proveedorId    Int
+  proveedor      Proveedor       @relation(fields: [proveedorId], references: [id])
+  detallesPedido DetallePedido[]
+}
+
+model Empleado {
+  id      Int      @id @default(autoincrement())
+  nombre  String
+  puesto  String
+  pedidos Pedido[]
+}
+
+model Pedido {
+  id         Int             @id @default(autoincrement())
+  fecha      DateTime        @default(now())
+  estado     String          @default("Pendiente")
+  clienteId  Int
+  cliente    Cliente         @relation(fields: [clienteId], references: [id])
+  empleadoId Int?
+  empleado   Empleado?       @relation(fields: [empleadoId], references: [id])
+  detalles   DetallePedido[]
+  envio      Envio?
+}
+
+model DetallePedido {
+  id         Int      @id @default(autoincrement())
+  pedidoId   Int
+  pedido     Pedido   @relation(fields: [pedidoId], references: [id])
+  productoId Int
+  producto   Producto @relation(fields: [productoId], references: [id])
+  cantidad   Int
+  subtotal   Decimal  @db.Decimal(10, 2)
+}
+
+model Envio {
+  id                Int       @id @default(autoincrement())
+  pedidoId          Int       @unique
+  pedido            Pedido    @relation(fields: [pedidoId], references: [id])
+  fechaEnvio        DateTime?
+  estadoEnvio       String    @default("En preparación")
+  codigoSeguimiento String?
+}
