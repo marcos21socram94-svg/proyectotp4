@@ -7,6 +7,7 @@ import empleadoRoutes from './routes/empleadoRoutes.js';
 import envioRoutes from './routes/envioRoutes.js';
 import pedidoRoutes from './routes/pedidoRoutes.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import informeRoutes from './routes/informeRoutes.js';
 
 // Cargar las variables de entorno del archivo .env
 dotenv.config();
@@ -24,6 +25,7 @@ app.use('/api/clientes', clienteRoutes);
 app.use('/api/empleados', empleadoRoutes);
 app.use('/api/envios', envioRoutes);
 app.use('/api/pedidos', pedidoRoutes);
+app.use('/api/informes', informeRoutes);
 
 // 4. Ruta 404 para endpoints inexistentes
 app.use((req, res) => {

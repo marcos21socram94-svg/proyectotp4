@@ -1,20 +1,31 @@
-import pool from '../config/db.js';
+import prisma from '../config/db.js';
 
+// Obtener todos los productos (incluyendo los datos de su proveedor)
 export const getAllProductos = async () => {
-  const [rows] = await pool.query('SELECT * FROM productos');
-  return rows;
+  return await prisma.producto.findMany({
+    include: { proveedor: true }
+  });
 };
 
+// Obtener un producto por ID
 export const getProductoById = async (id) => {
-  const [rows] = await pool.query('SELECT * FROM productos WHERE prod_id = ?', [id]);
-  return rows[0];
+  return await prisma.producto.findUnique({
+    where: { id: Number(id) },
+    include: { proveedor: true }
+  });
 };
 
+// Crear un producto nuevo
 export const createProducto = async (producto) => {
-  const { Tipo, Nombre, Vencimiento } = producto;
-  const [result] = await pool.query(
-    'INSERT INTO productos (Tipo, Nombre, Vencimiento) VALUES (?, ?, ?)',
-    [Tipo, Nombre, Vencimiento]
-  );
-  return { prod_id: result.insertId, ...producto };
+  const { nombre, precio, stock, proveedorId } = producto;
+  
+  return await prisma.producto.create({
+    data: {
+      nombre,
+      precio: Number(precio),     // Convertimos a número para el campo Decimal de Prisma
+      stock: Number(stock),       // Convertimos a número entero
+      proveedorId: Number(proveedorId) // Llave foránea hacia Proveedor
+    },
+    include: { proveedor: true }
+  });
 };

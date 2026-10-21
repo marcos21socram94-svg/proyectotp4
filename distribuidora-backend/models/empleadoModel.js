@@ -1,20 +1,41 @@
-import pool from '../config/db.js';
+import prisma from '../config/db.js';
 
 export const getAllEmpleados = async () => {
-  const [rows] = await pool.query('SELECT * FROM empleados');
-  return rows;
+  return await prisma.empleado.findMany();
 };
 
 export const getEmpleadoById = async (id) => {
-  const [rows] = await pool.query('SELECT * FROM empleados WHERE Id = ?', [id]);
-  return rows[0];
+  return await prisma.empleado.findUnique({
+    where: { id: Number(id) }
+  });
 };
 
 export const createEmpleado = async (empleado) => {
-  const { DNI, FechNacimiento, NombreYApellido, Correo, Telefono, ObraSocial } = empleado;
-  const [result] = await pool.query(
-    'INSERT INTO empleados (DNI, FechNacimiento, NombreYApellido, Correo, Telefono, ObraSocial) VALUES (?, ?, ?, ?, ?, ?)',
-    [DNI, FechNacimiento, NombreYApellido, Correo, Telefono, ObraSocial]
-  );
-  return { Id: result.insertId, ...empleado };
+  const { nombre, puesto } = empleado;
+  return await prisma.empleado.create({
+    data: { nombre, puesto }
+  });
+};
+
+export const updateEmpleado = async (id, empleadoData) => {
+  try {
+    await prisma.empleado.update({
+      where: { id: Number(id) },
+      data: empleadoData
+    });
+    return 1;
+  } catch (error) {
+    return 0;
+  }
+};
+
+export const deleteEmpleado = async (id) => {
+  try {
+    await prisma.empleado.delete({
+      where: { id: Number(id) }
+    });
+    return 1;
+  } catch (error) {
+    return 0;
+  }
 };

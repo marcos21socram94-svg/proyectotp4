@@ -1,20 +1,52 @@
-import pool from '../config/db.js';
+import prisma from '../config/db.js';
 
+// Obtener todos los clientes
 export const getAllClientes = async () => {
-  const [rows] = await pool.query('SELECT * FROM clientes');
-  return rows;
+  return await prisma.cliente.findMany();
 };
 
+// Obtener un cliente por ID
 export const getClienteById = async (id) => {
-  const [rows] = await pool.query('SELECT * FROM clientes WHERE id = ?', [id]);
-  return rows[0];
+  return await prisma.cliente.findUnique({
+    where: { id: Number(id) }
+  });
 };
 
+// Crear un cliente nuevo
 export const createCliente = async (cliente) => {
   const { NombreYApellido, Telefono, DNI, Correo } = cliente;
-  const [result] = await pool.query(
-    'INSERT INTO clientes (NombreYApellido, Telefono, DNI, Correo) VALUES (?, ?, ?, ?)',
-    [NombreYApellido, Telefono, DNI, Correo]
-  );
-  return { id: result.insertId, ...cliente };
+  
+  return await prisma.cliente.create({
+    data: {
+      NombreYApellido,
+      Telefono,
+      DNI,
+      Correo
+    }
+  });
+};
+
+// Actualizar un cliente
+export const updateCliente = async (id, clienteData) => {
+  try {
+    await prisma.cliente.update({
+      where: { id: Number(id) },
+      data: clienteData
+    });
+    return 1; // Retorna 1 para indicar que se afectó una fila con éxito
+  } catch (error) {
+    return 0; // Si Prisma no encuentra el ID, lanza error y retorna 0 filas afectadas
+  }
+};
+
+// Eliminar un cliente
+export const deleteCliente = async (id) => {
+  try {
+    await prisma.cliente.delete({
+      where: { id: Number(id) }
+    });
+    return 1; // Retorna 1 para indicar éxito
+  } catch (error) {
+    return 0; // Si no existe el registro
+  }
 };

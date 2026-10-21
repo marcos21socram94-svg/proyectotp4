@@ -1,21 +1,53 @@
-// models/envioModel.js
-import pool from '../config/db.js';
+import prisma from '../config/db.js';
 
 export const getAllCompaniasEnvio = async () => {
-  const [rows] = await pool.query('SELECT * FROM `compañia de envios`');
-  return rows;
+  return await prisma.envio.findMany({
+    include: { pedido: true }
+  });
 };
 
 export const getCompaniaEnvioById = async (id) => {
-  const [rows] = await pool.query('SELECT * FROM `compañia de envios` WHERE id_compañia = ?', [id]);
-  return rows[0];
+  return await prisma.envio.findUnique({
+    where: { id: Number(id) },
+    include: { pedido: true }
+  });
 };
 
 export const createCompaniaEnvio = async (compania) => {
-  const { correo, telefono, nombre } = compania;
-  const [result] = await pool.query(
-    'INSERT INTO `compañia de envios` (correo, telefono, nombre) VALUES (?, ?, ?)',
-    [correo, telefono, nombre]
-  );
-  return { id_compañia: result.insertId, ...compania };
+  const { pedidoId, fechaEnvio, estadoEnvio, codigoSeguimiento } = compania;
+  return await prisma.envio.create({
+    data: {
+      pedidoId: Number(pedidoId),
+      fechaEnvio: fechaEnvio ? new Date(fechaEnvio) : null,
+      estadoEnvio: estadoEnvio || "En preparación",
+      codigoSeguimiento
+    }
+  });
+};
+
+export const updateCompaniaEnvio = async (id, companiaData) => {
+  try {
+    const { fechaEnvio, ...rest } = companiaData;
+    await prisma.envio.update({
+      where: { id: Number(id) },
+      data: {
+        ...rest,
+        ...(fechaEnvio && { fechaEnvio: new Date(fechaEnvio) })
+      }
+    });
+    return 1;
+  } catch (error) {
+    return 0;
+  }
+};
+
+export const deleteCompaniaEnvio = async (id) => {
+  try {
+    await prisma.envio.delete({
+      where: { id: Number(id) }
+    });
+    return 1;
+  } catch (error) {
+    return 0;
+  }
 };
