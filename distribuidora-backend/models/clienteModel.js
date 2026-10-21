@@ -14,14 +14,14 @@ export const getClienteById = async (id) => {
 
 // Crear un cliente nuevo
 export const createCliente = async (cliente) => {
-  const { NombreYApellido, Telefono, DNI, Correo } = cliente;
+  const { nombre, email, telefono, direccion } = cliente;
   
   return await prisma.cliente.create({
     data: {
-      NombreYApellido,
-      Telefono,
-      DNI,
-      Correo
+      nombre,
+      email,
+      telefono,
+      direccion
     }
   });
 };
@@ -45,7 +45,7 @@ export const deleteCliente = async (id) => {
     await prisma.cliente.delete({
       where: { id: Number(id) }
     });
-    return 1; // Retorna 1 para indicar éxito
+    return 1; // Retorna 1 para éxito
   } catch (error) {
     return 0; // Si no existe el registro
   }
