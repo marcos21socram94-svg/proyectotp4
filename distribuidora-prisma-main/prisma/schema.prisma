@@ -1,0 +1,100 @@
+// Esquema de Prisma: describe las tablas de la base de datos.
+// De acá Prisma genera el cliente (prisma generate) y puede crear las tablas (prisma db push).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Proveedor {
+  id        Int        @id @default(autoincrement())
+  nombre    String     @db.VarChar(40)
+  telefono  String     @db.VarChar(20)
+  correo    String     @db.VarChar(50)
+  productos Producto[]
+
+  @@map("proveedores")
+}
+
+model Producto {
+  id          Int             @id @default(autoincrement())
+  tipo        String          @db.VarChar(30)
+  nombre      String          @db.VarChar(30)
+  precio      Decimal         @default(0) @db.Decimal(10, 2)
+  vencimiento DateTime        @db.Date
+  proveedorId Int?            @map("id_proveedor")
+  proveedor   Proveedor?      @relation(fields: [proveedorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  detalles    DetallePedido[]
+
+  @@index([proveedorId])
+  @@map("productos")
+}
+
+model Cliente {
+  id             Int      @id @default(autoincrement())
+  nombreApellido String   @map("nombre_apellido") @db.VarChar(50)
+  telefono       String   @db.VarChar(20)
+  dni            String   @unique @db.VarChar(20)
+  correo         String   @db.VarChar(50)
+  pedidos        Pedido[]
+
+  @@map("clientes")
+}
+
+model Empleado {
+  id              Int      @id @default(autoincrement())
+  dni             String   @unique @db.VarChar(20)
+  fechaNacimiento DateTime @map("fecha_nacimiento") @db.Date
+  nombreApellido  String   @map("nombre_apellido") @db.VarChar(50)
+  correo          String   @db.VarChar(50)
+  telefono        String   @db.VarChar(20)
+  obraSocial      String   @map("obra_social") @db.VarChar(30)
+  pedidos         Pedido[]
+
+  @@map("empleados")
+}
+
+model CompaniaEnvio {
+  id       Int      @id @default(autoincrement())
+  nombre   String   @db.VarChar(50)
+  correo   String   @db.VarChar(50)
+  telefono String   @db.VarChar(20)
+  pedidos  Pedido[]
+
+  @@map("companias_envio")
+}
+
+model Pedido {
+  id         Int             @id @default(autoincrement())
+  fecha      DateTime        @db.Date
+  clienteId  Int             @map("id_cliente")
+  companiaId Int?            @map("id_compania")
+  empleadoId Int             @map("id_empleado")
+  cliente    Cliente         @relation(fields: [clienteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  compania   CompaniaEnvio?  @relation(fields: [companiaId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  empleado   Empleado        @relation(fields: [empleadoId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  detalles   DetallePedido[]
+
+  @@index([clienteId])
+  @@index([companiaId])
+  @@index([empleadoId])
+  @@map("pedidos")
+}
+
+model DetallePedido {
+  id             Int      @id @default(autoincrement())
+  pedidoId       Int      @map("id_pedido")
+  productoId     Int      @map("id_producto")
+  cantidad       Int
+  precioUnitario Decimal  @map("precio_unitario") @db.Decimal(10, 2)
+  pedido         Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  producto       Producto @relation(fields: [productoId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([pedidoId])
+  @@index([productoId])
+  @@map("detalle_pedidos")
+}
