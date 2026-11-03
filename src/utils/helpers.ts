@@ -1,4 +1,5 @@
-// Funciones chicas que usan los controladores para validar datos.
+// Funciones chicas que usan los controladores (ids y filtros opcionales de la URL).
+// La validación del body está en src/validations (capa de validación).
 
 // Error "esperado" de la aplicación, con su código HTTP (400, 404, etc.)
 export class AppError extends Error {
@@ -17,25 +18,6 @@ export const leerId = (valor: string): number => {
     throw new AppError(400, 'El id debe ser un número entero positivo');
   }
   return id;
-};
-
-// Verifica que el body traiga todos los campos obligatorios. Si falta alguno responde 400.
-export const exigirCampos = (body: any, campos: string[]): void => {
-  const faltan = campos.filter(
-    (c) => body?.[c] === undefined || body[c] === null || body[c] === ''
-  );
-  if (faltan.length > 0) {
-    throw new AppError(400, `Faltan campos obligatorios: ${faltan.join(', ')}`);
-  }
-};
-
-// Copia del body solo los campos permitidos (ignora cualquier otro dato que llegue).
-export const tomarCampos = (body: any, campos: string[]): any => {
-  const resultado: any = {};
-  for (const campo of campos) {
-    if (body?.[campo] !== undefined) resultado[campo] = body[campo];
-  }
-  return resultado;
 };
 
 // Convierte un texto "AAAA-MM-DD" en Date (Prisma necesita objetos Date). Si es inválido responde 400.

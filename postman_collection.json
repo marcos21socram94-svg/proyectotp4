@@ -2,7 +2,7 @@
   "info": {
     "name": "TP5 - Distribuidora (Express + TypeScript + Prisma)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Casos de prueba funcionales. Ejecutar con la base cargada con database.sql y el servidor en http://localhost:3000. Orden recomendado: correr la colección completa (Runner)."
+    "description": "Casos de prueba funcionales. Antes de correr: crear la base con `npx prisma db push` y cargar los datos con `npx prisma db seed`; servidor en http://localhost:3000. Orden recomendado: correr la colección completa (Runner)."
   },
   "variable": [
     {
@@ -245,7 +245,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "pm.collectionVariables.set(\"provId\", pm.response.json().id);"
+                  "pm.collectionVariables.set(\"provId\", pm.response.json().data.id);"
                 ]
               }
             }
@@ -623,7 +623,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "pm.collectionVariables.set(\"prodId\", pm.response.json().id);"
+                  "pm.collectionVariables.set(\"prodId\", pm.response.json().data.id);"
                 ]
               }
             }
@@ -1078,7 +1078,8 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "pm.collectionVariables.set(\"cliId\", pm.response.json().id);"
+                  "pm.collectionVariables.set(\"cliId\", pm.response.json().data.id);",
+                  "pm.test(\"Devuelve mensaje de éxito\", function () { pm.expect(pm.response.json().mensaje).to.eql(\"Cliente creado con éxito\"); });"
                 ]
               }
             }
@@ -1250,7 +1251,8 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Avisa el DNI repetido\", function () { pm.expect(pm.response.json().mensaje).to.include(\"DNI\"); });"
                 ]
               }
             }
@@ -1275,7 +1277,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombreApellido\": \"Otra Persona\",\n  \"telefono\": \"1\",\n  \"dni\": \"30111222\",\n  \"correo\": \"o@o.com\"\n}",
+              "raw": "{\n  \"nombreApellido\": \"Otra Persona\",\n  \"telefono\": \"2984000000\",\n  \"dni\": \"30111222\",\n  \"correo\": \"o@o.com\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1384,7 +1386,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "pm.collectionVariables.set(\"empId\", pm.response.json().id);"
+                  "pm.collectionVariables.set(\"empId\", pm.response.json().data.id);"
                 ]
               }
             }
@@ -1690,7 +1692,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "pm.collectionVariables.set(\"envId\", pm.response.json().id);"
+                  "pm.collectionVariables.set(\"envId\", pm.response.json().data.id);"
                 ]
               }
             }
@@ -2026,7 +2028,8 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "pm.collectionVariables.set(\"pedId\", pm.response.json().id);"
+                  "pm.collectionVariables.set(\"pedId\", pm.response.json().data.id);",
+                  "pm.test(\"Devuelve mensaje de éxito\", function () { pm.expect(pm.response.json().mensaje).to.eql(\"Pedido creado con éxito\"); });"
                 ]
               }
             }
@@ -2052,6 +2055,49 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fecha\": \"2026-10-20\",\n  \"clienteId\": 3,\n  \"empleadoId\": 2,\n  \"companiaId\": 1,\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 5\n    },\n    {\n      \"productoId\": 5,\n      \"cantidad\": 10,\n      \"precioUnitario\": 950\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: producto repetido en el detalle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Avisa el producto repetido\", function () { pm.expect(pm.response.json().errores.join(\" \")).to.include(\"repetido\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pedidos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pedidos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-10-20\",\n  \"clienteId\": 3,\n  \"empleadoId\": 2,\n  \"companiaId\": 1,\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 5\n    },\n    {\n      \"productoId\": 1,\n      \"cantidad\": 10,\n      \"precioUnitario\": 950\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"

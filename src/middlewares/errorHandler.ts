@@ -2,6 +2,15 @@ import { NextFunction, Request, Response } from 'express';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../utils/helpers';
 
+// Arma el mensaje del error P2002 según el índice único que falló
+// (Prisma informa el nombre del índice o la lista de campos en err.meta.target).
+const mensajeUnico = (target: unknown): string => {
+  const t = String(Array.isArray(target) ? target.join(',') : target ?? '');
+  if (t.includes('pedido') && t.includes('producto')) return 'Ese producto ya está cargado en el pedido. Modificá la cantidad en lugar de agregarlo otra vez';
+  if (t.includes('dni')) return 'Ya existe un registro con ese DNI';
+  return 'Ya existe un registro con ese valor, que no se puede repetir';
+};
+
 // MANEJO GLOBAL DE ERRORES (consigna 2.5)
 // Cualquier error que ocurra en una ruta llega acá. El detalle técnico (stack trace, SQL)
 // solo se muestra en la consola del servidor; al cliente SIEMPRE se le devuelve un JSON controlado.
@@ -16,8 +25,8 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
   // 2) Errores conocidos de la base de datos, identificados por el código de Prisma
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     switch (err.code) {
-      case 'P2002': // valor único repetido (ej: DNI ya cargado)
-        return res.status(400).json({ status: 'error', mensaje: 'Ya existe un registro con ese valor único (por ejemplo, un DNI repetido)' });
+      case 'P2002': // valor único repetido: se avisa CUÁL campo se repitió
+        return res.status(400).json({ status: 'error', mensaje: mensajeUnico(err.meta?.target) });
       case 'P2003': // clave foránea inválida o registro con datos relacionados
         return res.status(400).json({ status: 'error', mensaje: 'Relación inválida: el registro referenciado no existe o tiene datos relacionados' });
       case 'P2025': // registro no encontrado (al actualizar o eliminar)
